@@ -1,6 +1,8 @@
 package at.oltdaniel.rwthmensa
 
+import android.app.Service
 import android.content.Context
+import android.net.ConnectivityManager
 import com.android.volley.toolbox.RequestFuture
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -11,6 +13,7 @@ class Crawler(private val context: Context) {
     private var queue = Volley.newRequestQueue(context)
     private val cache = Cache(context, BASE_URL)
     private val parser = Parser()
+    private val connectivityService = context.getSystemService(Service.CONNECTIVITY_SERVICE) as ConnectivityManager
 
     /**
      * Return total menu
@@ -33,6 +36,8 @@ class Crawler(private val context: Context) {
         val cacheValue = cache.getCache()
         if(cacheValue != null) {
             return cacheValue
+        } else if(!connectivityService.isDefaultNetworkActive) {
+            return null
         }
         val requestFuture : RequestFuture<String> = RequestFuture.newFuture()
         val request = StringRequest(BASE_URL, requestFuture, requestFuture)

@@ -2,7 +2,7 @@ package at.oltdaniel.rwthmensa
 
 import android.content.Context
 import java.io.File
-import java.text.DateFormat
+import java.security.MessageDigest
 import java.util.*
 
 class Cache(
@@ -14,7 +14,7 @@ class Cache(
     private val TAG_DATE = "mensa-date"
     // Cache file path
     private val TODAY = today()
-    private val HASH = TODAY.hashCode()
+    private val HASH = hash(TODAY + url)
     private val FILE = context.filesDir.absolutePath + "/" + HASH + ".html"
     // Open shared preferences
     private val sharedPreferences = context.getSharedPreferences(TAG, Context.MODE_PRIVATE)
@@ -45,6 +45,12 @@ class Cache(
      * Return today as a String
      */
     private fun today() : String {
-        return DateFormat.getTimeInstance(DateFormat.DATE_FIELD).format(Date())
+        return Date().toDaysOnly()
+    }
+
+    private fun hash(text : String) : String {
+        val digest = MessageDigest.getInstance("MD5")
+        digest.update(text.toByteArray())
+        return digest.digest().toString()
     }
 }
