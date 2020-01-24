@@ -5,11 +5,14 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import java.util.*
+import kotlin.collections.ArrayList
 
 class DishAdapter(
     private val data: ArrayList<DayMenu>
 ) : RecyclerView.Adapter<DishAdapter.ViewHolder>() {
-    var day = 0
+    private var day = 0
+
     class ViewHolder(val linearLayout: LinearLayout) : RecyclerView.ViewHolder(linearLayout)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,4 +37,38 @@ class DishAdapter(
         }
         return data[day].dishes.size
     }
+
+    fun selectToday() {
+        data.forEachIndexed { index, dayMenu ->
+            if(dayMenu.date.toDaysOnly() == Date().toDaysOnly()) {
+                day = index
+                return@forEachIndexed
+            }
+        }
+        this.notifyDataSetChanged()
+    }
+
+    fun getCurrentDay() : DayMenu {
+        return data[day]
+    }
+
+    fun previousDay() : Boolean {
+        if(day > 0) {
+            day -= 1
+            this.notifyDataSetChanged()
+        }
+        return (day > 0)
+    }
+
+    fun previousEnabled() = (day > 0)
+
+    fun nextDay() : Boolean {
+        if(day < data.size) {
+            day += 1
+            this.notifyDataSetChanged()
+        }
+        return (day < data.size - 1)
+    }
+
+    fun nextEnabled() = (day < data.size - 1)
 }

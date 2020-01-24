@@ -80,6 +80,6 @@ class DayMenuParserRunnable(
             val org = e.text()
             e.text(" $org ")
         }
-        return el.text()
+        return toUtf8(el.text())
     }
 }
