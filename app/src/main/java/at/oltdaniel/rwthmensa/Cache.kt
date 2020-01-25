@@ -24,7 +24,10 @@ class Cache(
      */
     fun getCache() : String? {
         if(sharedPreferences.getString(TAG_DATE, "") == TODAY) {
-            return File(FILE).readText()
+            val f = File(FILE)
+            if(f.exists()) {
+                return f.readText()
+            }
         }
         return null
     }
@@ -32,7 +35,9 @@ class Cache(
     fun setCache(content: String) {
         // Ensure file exists
         val file = File(FILE)
-        file.createNewFile()
+        if(!file.exists()) {
+            file.createNewFile()
+        }
         // Write new content
         file.writeText(content)
         // Update shared preferences
@@ -51,6 +56,6 @@ class Cache(
     private fun hash(text : String) : String {
         val digest = MessageDigest.getInstance("MD5")
         digest.update(text.toByteArray())
-        return digest.digest().toString()
+        return digest.digest().joinToString("") { e -> Integer.toHexString(e.toInt()) }
     }
 }

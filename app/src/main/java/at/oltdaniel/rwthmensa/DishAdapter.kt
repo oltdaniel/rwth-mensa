@@ -42,10 +42,14 @@ class DishAdapter(
         data.forEachIndexed { index, dayMenu ->
             if(dayMenu.date.toDaysOnly() == Date().toDaysOnly()) {
                 day = index
-                return@forEachIndexed
+                this.notifyDataSetChanged()
+                return
+            } else if(dayMenu.date.after(Date())) {
+                day = index
+                this.notifyDataSetChanged()
+                return
             }
         }
-        this.notifyDataSetChanged()
     }
 
     fun getCurrentDay() : DayMenu {
