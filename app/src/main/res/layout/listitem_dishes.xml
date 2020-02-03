@@ -25,6 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="monospace"
             android:text="2,60€"
             android:textAlignment="textEnd" />
     </LinearLayout>
@@ -34,4 +35,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Schweineschnitzel mit Paprikasauce" />
+
+    <TextView
+        android:id="@+id/dish_types"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textAlignment="textEnd"
+        android:textAllCaps="false"
+        android:textSize="12sp"
+        android:textStyle="italic" />
+
 </LinearLayout>

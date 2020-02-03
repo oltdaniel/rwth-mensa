@@ -1,6 +1,7 @@
 package at.oltdaniel.rwthmensa
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -25,10 +26,12 @@ class DishAdapter(
         val labelView = holder.linearLayout.findViewById<TextView>(R.id.dish_label)
         val priceView = holder.linearLayout.findViewById<TextView>(R.id.dish_price)
         val foodView = holder.linearLayout.findViewById<TextView>(R.id.dish_food)
+        val typesView = holder.linearLayout.findViewById<TextView>(R.id.dish_types)
         val dish = data[day].dishes[position]
         labelView.text = dish.label
         priceView.text = dish.getPrice()
         foodView.text = dish.food
+        typesView.text = dish.getTypes()
     }
 
     override fun getItemCount() : Int {

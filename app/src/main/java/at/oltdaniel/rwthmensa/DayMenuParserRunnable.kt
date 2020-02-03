@@ -42,8 +42,28 @@ class DayMenuParserRunnable(
             val label = labelNode
             val price = stringPriceToDouble(priceNode)
             val food = foodNode
+            // Get dish types
+            val types = ArrayList<DISH_TYPES>()
+            if(it.hasClass("Geflügel")) {
+                types.add(DISH_TYPES.GEFLUEGEL)
+            }
+            if(it.hasClass("Rind")) {
+                types.add(DISH_TYPES.RIND)
+            }
+            if(it.hasClass("Schwein")) {
+                types.add(DISH_TYPES.SCHWEIN)
+            }
+            if(it.hasClass("OVL")) {
+                types.add(DISH_TYPES.OVL)
+            }
+            if(it.hasClass("Vegan")) {
+                types.add(DISH_TYPES.VEGAN)
+            }
+            if(it.hasClass("Fisch")) {
+                types.add(DISH_TYPES.FISCH)
+            }
             // Add dish
-            dishes.add(Dish(label, price, food))
+            dishes.add(Dish(label, price, food, types))
         }
         // Find all extras
         val extraNodes = element.select(".extras tr")

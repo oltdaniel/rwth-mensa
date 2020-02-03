@@ -16,6 +16,7 @@ import androidx.core.content.edit
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -23,6 +24,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var sharedPreferences: SharedPreferences
     private val NIGHT_MODE = "night_mode"
+
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: DishAdapter
@@ -43,6 +46,9 @@ class MainActivity : AppCompatActivity() {
         } else {
             delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
         }
+
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -66,6 +72,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         previousDayButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "previous_day")
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
             if(!viewAdapter.previousDay()) {
                 previousDayButton.isEnabled = false
             } else if(!nextDayButton.isEnabled) {
@@ -74,6 +83,9 @@ class MainActivity : AppCompatActivity() {
             renderDay(viewAdapter.getCurrentDay())
         }
         nextDayButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "next_day")
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
             if(!viewAdapter.nextDay()) {
                 nextDayButton.isEnabled = false
             } else if(!previousDayButton.isEnabled) {
@@ -82,24 +94,31 @@ class MainActivity : AppCompatActivity() {
             renderDay(viewAdapter.getCurrentDay())
         }
         headingTextView.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "today")
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
             viewAdapter.selectToday()
             renderDay(viewAdapter.getCurrentDay())
         }
 
         Thread(Runnable {
+            val bundle = Bundle()
             val totalMenu = crawler.getTotalMenu()
             if(totalMenu == null) {
                 runOnUiThread {
                     Snackbar.make(content, "Loading error", Snackbar.LENGTH_INDEFINITE).show()
                 }
+                bundle.putBoolean(FirebaseAnalytics.Param.SUCCESS, false)
             } else {
                 days.addAll(totalMenu.days)
                 runOnUiThread {
                     viewAdapter.selectToday()
                     renderDay(viewAdapter.getCurrentDay())
                 }
+                bundle.putBoolean(FirebaseAnalytics.Param.SUCCESS, true)
             }
             runOnUiThread { progressBar.visibility = View.INVISIBLE }
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, bundle)
         }).start()
     }
 
@@ -145,8 +164,16 @@ class MainActivity : AppCompatActivity() {
                 sharedPreferences.edit {
                     this.putBoolean(NIGHT_MODE, false)
                 }
+                val bundle = Bundle()
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "night_mode")
+                bundle.putString(FirebaseAnalytics.Param.CONTENT, "day")
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
             }
             1 -> {
+                val bundle = Bundle()
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "night_mode")
+                bundle.putString(FirebaseAnalytics.Param.CONTENT, "night")
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
                 item.icon = getDrawable(R.drawable.ic_night_mode)
                 delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
                 sharedPreferences.edit {
