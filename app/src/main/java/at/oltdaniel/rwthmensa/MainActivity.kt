@@ -149,6 +149,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setNightModeStatus(item: MenuItem, status: Int) {
+        val editor = sharedPreferences.edit()
         when(status) {
             2 -> {
                 val current = sharedPreferences.getBoolean(NIGHT_MODE, false)
@@ -161,9 +162,7 @@ class MainActivity : AppCompatActivity() {
             0 -> {
                 item.icon = getDrawable(R.drawable.ic_night_mode_off)
                 delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_NO
-                sharedPreferences.edit {
-                    this.putBoolean(NIGHT_MODE, false)
-                }
+                editor.putBoolean(NIGHT_MODE, false)
                 val bundle = Bundle()
                 bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "night_mode")
                 bundle.putString(FirebaseAnalytics.Param.CONTENT, "day")
@@ -176,11 +175,10 @@ class MainActivity : AppCompatActivity() {
                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
                 item.icon = getDrawable(R.drawable.ic_night_mode)
                 delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
-                sharedPreferences.edit {
-                    this.putBoolean(NIGHT_MODE, true)
+                editor.putBoolean(NIGHT_MODE, true)
                 }
             }
-        }
+        editor.apply()
     }
 
     private fun renderDay(day : DayMenu) {
